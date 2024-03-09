@@ -1,3 +1,9 @@
+// Hers is some of the additional functionality I added to the core requirements.
+// The program keeps track of whether or not the new entries have been saved.
+// The user will be prompted to save any additional entries before loading a new file.
+// The user is also given the option to save to the current file name or to save with a new name.
+// If there are no entries, the user will be given an error message and the file will not save.
+
 using System;
 
 class Program
