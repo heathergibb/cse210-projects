@@ -1,8 +1,8 @@
 using System;
-using System.Configuration.Assemblies;
-using System.Data;
-using System.Linq.Expressions;
-using System.IO;
+// using System.Configuration.Assemblies;
+// using System.Data;
+// using System.Linq.Expressions;
+// using System.IO;
 
 class Program
 {
@@ -12,13 +12,13 @@ class Program
         
         Journal myJournal = new Journal();
         
-        bool isFinished = false;
-        bool isSaved = true;
+        bool isFinished = false; //use to exit loop when finished
+        bool isSaved = true; // is the current journal saved or null
         string userResponse = "";
         
         do 
         {
-            Console.WriteLine("Please select one of the following choices:");
+            Console.WriteLine("\nPlease select one of the following choices:");
             Console.WriteLine("1. Write");
             Console.WriteLine("2. Display");
             Console.WriteLine("3. Load");
@@ -40,20 +40,31 @@ class Program
                 case "3": //Load
                     if (isSaved == false)
                     { 
-                        Console.WriteLine("Do you want to save your current journal before loading a new one (y/n)");
+                        Console.WriteLine($"\nYou have unsaved changes in your current journal. Do you want to save your current journal first? (y/n)");
                         string saveResponse = Console.ReadLine();
+                        
                         if (saveResponse.ToUpper() == "Y")
-                        {
-                            myJournal.SaveToFile(PromptFileName("save"));
+                        { 
+                            myJournal.SaveToFile(PromptSaveFileName(myJournal._currentFileName));
+                            isSaved = true;
                         }
                     }
 
-                    myJournal.LoadFromFile(PromptFileName("load"));
+                    myJournal._currentFileName = PromptLoadFileName();
+                    myJournal.LoadFromFile(myJournal._currentFileName);
                     isSaved = true;
                     break;
                 case "4": //Save
-                    myJournal.SaveToFile(PromptFileName("save"));
-                    isSaved = true;
+                    if (myJournal._entries.Count() == 0)
+                    {   
+                        Console.WriteLine("\nThere are no entries to save. Write and entry first, then save.");
+                    }
+                    else 
+                    {
+                        myJournal._currentFileName = PromptSaveFileName(myJournal._currentFileName);
+                        myJournal.SaveToFile(myJournal._currentFileName);
+                        isSaved = true;
+                    }
                     break;
                 case "5": //Quit
                     isFinished = true;
@@ -74,103 +85,45 @@ class Program
         
         PromptGenerator prompt = new PromptGenerator();
         journalEntry._promptText = prompt.GetRandomPrompt();
+        
+        Console.WriteLine();
         Console.WriteLine(journalEntry._promptText);
+        Console.Write("> ");
 
         journalEntry._entryText = Console.ReadLine();
         
         journal.AddEntry(journalEntry);
     }
 
-    static string PromptFileName(string action)
+    static string PromptSaveFileName(string fileName)
     {
-        Console.WriteLine($"What is the name of the file to {action}?");
-        return Console.ReadLine();
-    }
-}
-
-class Journal
-{
-    public List<Entry> _entries = new List<Entry>();
-    public void AddEntry(Entry newEntry)
-    {
-        _entries.Add(newEntry);
-    }
-
-    public void DisplayAll()
-    {
-        foreach (Entry e in _entries)
+        // if the file has already been created, ask if the user would like to 
+        // save to the existing file.               
+        if (fileName != "")
         {
-            e.Display();
-        }
-    }
-
-    public void SaveToFile(string file)
-    {
-        using (StreamWriter outputFile = new StreamWriter(file))
-        {
-            foreach (Entry e in _entries)
+            Console.WriteLine($"\nDo you want to save as {fileName}? (y/n) ");
+            
+            // if the user does not want to save to the existing file, 
+            // change the fileName variable to "" and later in this function
+            // there will be a prompt for a new fileName
+            if (Console.ReadLine().ToUpper() == "N")
             {
-                //outputFile.WriteLine($"Date: {e._date} - Prompt: {e._promptText}");
-                //outputFile.WriteLine($"{e._entryText}\n");
-
-                outputFile.WriteLine($"{e._date}|{e._promptText}|{e._entryText}");
+                fileName = "";
             }
         }
-        Console.WriteLine($"Successfully saved: {file}");
-    }
-
-    public void LoadFromFile(string file)
-    {
-        _entries.Clear();
-
-        string[] lines = System.IO.File.ReadAllLines(file);
-
-        foreach (string line in lines)
+        
+        if (fileName == "")
         {
-            Entry newEntry = new Entry();
-            string[] parts = line.Split("|");
-            newEntry._date = parts[0];
-            newEntry._promptText = parts[1];
-            newEntry._entryText = parts[2];  
-            AddEntry(newEntry);
+            Console.WriteLine("What is the save name for the file? ");
+            fileName = Console.ReadLine();
         }
+
+        return fileName;
     }
-}
 
-class Entry
-{
-    public string _date = "";
-    public string _promptText = "";
-    public string _entryText = "";
-
-    public void Display()
-    {
-        Console.WriteLine($"Date: {_date} - Prompt: {_promptText}");
-        Console.WriteLine($"{_entryText}\n");
-    }
-}
-
-class PromptGenerator
-{
-    public List<string> _prompts = new List<string>(); 
-    
-    public string GetRandomPrompt()
-    {
-        Random randomizer = new Random();
-
-        _prompts.Add("Who was the most interesting person I interacted with today?");
-        _prompts.Add("What was the best part of my day?");
-        _prompts.Add("How did I see the hand of the Lord in my life today?");
-        _prompts.Add("What was the strongest emotion I felt today?");
-        _prompts.Add("If I had one thing I could do over today, what would it be?");
-        _prompts.Add("What is one goal I worked on today, or would like to work on tomorrow?");
-        _prompts.Add("Describe something I did successfully today.");
-        _prompts.Add("What was the most beautiful thing I saw or experienced today?");
-        _prompts.Add("Describe a family interaction that happened today.");
-        _prompts.Add("What is something that worried me today? What can I do to resolve it?");
-        
-        int randomIndex = randomizer.Next(0, _prompts.Count());
-        
-        return _prompts.ElementAt(randomIndex);
+    static string PromptLoadFileName()
+    { 
+        Console.WriteLine("\nWhat is the name of the file to load? ");
+        return Console.ReadLine();
     }
 }
