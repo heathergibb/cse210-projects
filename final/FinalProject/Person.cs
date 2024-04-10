@@ -1,3 +1,5 @@
+using System.Configuration.Assemblies;
+
 public class Person
 {
     private string _givenName;
@@ -13,6 +15,8 @@ public class Person
     private SealingSpouse _sealingSpouse;
     private SealingParents _sealingParents;
     private List<Source> _sources = new List<Source>();
+    private bool _changed;
+    private string _fileName;
 
     public Person(string givenName, string lastName, string sex)
     {
@@ -27,10 +31,13 @@ public class Person
         _baptism = new Ordinance("Baptism");
         _confirmation = new Ordinance("Confirmation");
         _initiatory = new Ordinance("Initiatory");
-        _endowment = new Ordinance("Endowement");
+        _endowment = new Ordinance("Endowment");
         _sealingSpouse = new SealingSpouse("Sealing to Spouse");
         _sealingParents = new SealingParents("Sealing to Parents");
         _sources.Clear();
+
+        _changed = false;
+        _fileName = "";
     }
 
     public string GetPersonName()
@@ -38,8 +45,68 @@ public class Person
         return $"{_givenName} {_lastName}";
     }
 
+    public string GetFileName()
+    {
+        return _fileName;
+    }
+
+    public void SetFileName(string fileName)
+    {
+        _fileName = fileName;
+    }
+
+    public void SetBirth(BirthEvent birth)
+    {
+        _birth = birth;
+    }
+    public void SetMarriage(MarriageEvent marriage)
+    {
+        _marriage = marriage;
+    }
+    public void SetDeath(DeathEvent death)
+    {
+        _death = death;
+    }
+    public void SetBaptism(Ordinance ord)
+    {
+        _baptism = ord;
+    }
+    public void SetConfirmation(Ordinance ord)
+    {
+        _confirmation = ord;
+    }
+    public void SetInitiatory(Ordinance ord)
+    {
+        _initiatory = ord;
+    }
+    public void SetEndowment(Ordinance ord)
+    {
+        _endowment = ord;
+    }
+    public void SetSealingSpouse(SealingSpouse ss)
+    {
+        _sealingSpouse = ss;
+    }
+    public void SetSealingParents(SealingParents sp)
+    {
+        _sealingParents = sp;
+    }
+    public void SetSources(List<Source> sources)
+    {
+        _sources = sources;
+    }
+    public void SetChanged(bool changed)
+    {
+        _changed = changed;
+    }
+    public bool GetChanged()
+    {
+        return _changed;
+    }
     public void DisplayOrdinanceMenu()
     {
+        // displays each ordinance with the details formatted according to 
+        // their specific type
         Console.WriteLine($"1. {_baptism.DisplayOrdinanceString()}");
         Console.WriteLine($"2. {_confirmation.DisplayOrdinanceString()}");
         Console.WriteLine($"3. {_initiatory.DisplayOrdinanceString()}");
@@ -52,6 +119,8 @@ public class Person
 
     public void EditOrdinance(string type)
     {
+        _changed = true;
+
         Console.Write($"Has the {type} been completed? Y or N: ");
         string answer = Console.ReadLine();
 
@@ -83,13 +152,13 @@ public class Person
                 case "Endowment":
                     _endowment = new Ordinance(true, date, location, type);
                     break;
-                case "SealingSpouse":
+                case "Sealing to Spouse":
                     Console.Write("What is the spouse's name: ");
                     string spouse = Console.ReadLine();
 
                     _sealingSpouse = new SealingSpouse(true, date, location, type, spouse);
                     break;
-                case "SealingParents":
+                case "Sealing to Parents":
                     Console.Write("What is the father's name? ");
                     string father = Console.ReadLine();
                     Console.Write("What is the mother's name? ");
@@ -133,6 +202,8 @@ public class Person
 
     public void DisplayVitalsEventsMenu()
     {
+        // displays the menu options and for the events, calls the event class to
+        // handle the formatting of the display string, according to each type.
         Console.WriteLine($"1. Given Name - {_givenName}");
         Console.WriteLine($"2. Last Name - {_lastName}");
         Console.WriteLine($"3. Sex - {_sex}");
@@ -201,13 +272,13 @@ public class Person
 
     public void SubmitSource()
     {
+        // display all previous sources then handles entry of new source information
         Console.Clear();
         Console.WriteLine($"Sources for {GetPersonName()}");
         Console.WriteLine();
         DisplaySourceList();
 
-        Console.WriteLine("Enter New Source");
-        Console.WriteLine();
+        Console.WriteLine("-------------------");
         Console.Write("Source Description: ");
         string desc = Console.ReadLine();
         Console.Write("Date or Date Range: ");
@@ -223,6 +294,7 @@ public class Person
             _sources.Add(newSource);
         
             Console.WriteLine("Source successfully added. Press enter to continue...");
+            _changed = true;
         }
         else
         {
@@ -242,7 +314,31 @@ public class Person
     public void DisplayFullDetails()
     {
         Console.Clear();
-        Console.WriteLine("Full details");
+        Console.WriteLine($"FULL DETAILS FOR {_givenName.ToUpper()} {_lastName.ToUpper()}");
+        Console.WriteLine();
+        Console.WriteLine("VITALS");
+        Console.WriteLine("");
+        Console.WriteLine($"Sex : {_sex}");
+        Console.WriteLine($"Birth: {_birth.DisplayEventString()}");
+        Console.WriteLine($"Marriage: {_marriage.DisplayEventString()}");
+        Console.WriteLine($"Death: {_death.DisplayEventString()}");
+        Console.WriteLine();
+        Console.WriteLine($"ORDINANCES");
+        Console.WriteLine("");
+        Console.WriteLine($"Baptism: {_baptism.DisplayOrdinanceString()}");
+        Console.WriteLine($"Confirmation: {_confirmation.DisplayOrdinanceString()}");
+        Console.WriteLine($"Initiatory: {_initiatory.DisplayOrdinanceString()}");
+        Console.WriteLine($"Endowment: {_endowment.DisplayOrdinanceString()}");
+        Console.WriteLine($"Sealing to Spouse: {_sealingSpouse.DisplayOrdinanceString()}");
+        Console.WriteLine($"Sealing to Parents: {_sealingParents.DisplayOrdinanceString()}");
+        Console.WriteLine("");
+        Console.WriteLine($"{_sources.Count()} SOURCES");
+        Console.WriteLine();
+        foreach (Source s in _sources)
+        {
+            Console.WriteLine(s.FormatListDisplay());
+        }
+        
         Console.WriteLine("Press Enter to continue...");
         Console.ReadLine();
     }
@@ -250,8 +346,57 @@ public class Person
     public void DisplayTempleCardDetails()
     {
         Console.Clear();
-        Console.WriteLine("Temple Card details");
+        Console.WriteLine("Temple Card");
+        Console.WriteLine();
+        Console.WriteLine(GetPersonName());
+        Console.WriteLine();
+        Console.WriteLine($"Baptism: {_baptism.DisplayOrdinanceString()}");
+        Console.WriteLine($"Confirmation: {_confirmation.DisplayOrdinanceString()}");
+        Console.WriteLine($"Initiatory: {_initiatory.DisplayOrdinanceString()}");
+        Console.WriteLine($"Endowment: {_endowment.DisplayOrdinanceString()}");
+        Console.WriteLine($"Sealing to Spouse: {_sealingSpouse.DisplayOrdinanceString()}");
+        Console.WriteLine($"Sealing to Parents: {_sealingParents.DisplayOrdinanceString()}");
+        Console.WriteLine();
+        Console.WriteLine($"Printed: {DateTime.Now.ToString("dd MMMM yyyy hh:mm")}");
+        Console.WriteLine();
         Console.WriteLine("Press Enter to continue...");
         Console.ReadLine();
+    }
+
+    public void SaveData()
+    {
+        // save all the person information to a .txt file
+        FileManager save =  new FileManager();
+
+        if (_fileName == "")
+        {
+            _fileName = save.ValidateSaveName($"{_givenName}{_lastName}");
+        }
+
+        //create list of strings of data to save to txt file
+        List<string> saveData = new List<string>();
+
+        saveData.Add($"{_fileName}|{_givenName}|{_lastName}|{_sex}");
+        // Events
+        saveData.Add(_birth.FormatSaveString());
+        saveData.Add(_marriage.FormatSaveString());
+        saveData.Add(_death.FormatSaveString());
+
+        // Ordinances
+        saveData.Add(_baptism.FormatSaveString());
+        saveData.Add(_confirmation.FormatSaveString());
+        saveData.Add(_initiatory.FormatSaveString());
+        saveData.Add(_endowment.FormatSaveString());
+        saveData.Add(_sealingSpouse.FormatSaveString());
+        saveData.Add(_sealingParents.FormatSaveString());
+
+        // Sources
+        foreach (Source s in _sources)
+        {
+            saveData.Add(s.FormatSaveString());
+        }
+
+        save.SavePerson(_fileName,saveData);
+        _changed = false;
     }
 }

@@ -11,8 +11,72 @@ public class MenuManager
     {
         _person = person;
     }
+
+    public string LoadFromFileMenu(string[] fileNames)
+    {
+        // given a list of file names that were found in the FileManager method
+        // create the list with the options and handle the user selection
+        // returns the selected filename
+
+        Console.Clear();
+        Console.WriteLine("Load Person From File:");
+        Console.WriteLine();
+        
+        int i = 1;
+
+        foreach (string f in fileNames)
+        {
+            string[] lines = System.IO.File.ReadAllLines(f);
+            string[] parts = lines[0].Split("|");
+
+            Console.WriteLine($"{i}. {parts[0]}.txt - {parts[1]} {parts[2]} {parts[3]}");
+            i++;
+        }
+
+        Console.WriteLine($"{i}. Go back");
+        Console.Write("Select an option from the list: ");
+        
+        int selected;
+        bool error;
+
+        do
+        {
+            error = false;
+            
+            if (int.TryParse(Console.ReadLine(),out selected))
+            {
+                if  (!(selected > 0 && selected <= i))
+                {
+                    error = true;
+                }
+            }
+            else
+            {
+                error = true;
+            }
+
+            if (error)
+            {
+                Console.WriteLine($"Invalid entry. Select a number between 1 - {i}");
+            }
+        } while (error);
+        
+        if (selected == i)
+        {
+            return "";
+        }
+        else    
+        {
+            return fileNames[selected - 1];
+        }
+
+    }
     public void PersonMenu()
     {
+        // displays the person menu options and handles the user's response.
+        // calls the appropriate functions and returns to this menu until the 
+        // user chooses to Return to Main Menu
+
         bool loopAgain = true;
 
         while (loopAgain)
@@ -56,11 +120,27 @@ public class MenuManager
                     break;
                 case "6":
                     // Save all the details to a file
-                    FileManager save =  new FileManager();
-                    save.SavePerson(_person);
+                    _person.SaveData();
                     break;
                 case "7":
                     // exit loop return to main menu
+
+                    if (_person.GetChanged()) //changes were made, prompt to save first
+                    {
+                        Console.Write("Would you like to save changes before returning to Main Menu (Y, N)? ");
+                        string answer = Console.ReadLine();
+
+                        while (!(answer.ToUpper() == "Y" || answer.ToUpper() == "N"))
+                        {
+                            Console.Write("Invalid entry. Enter Y or N: ");
+                            answer = Console.ReadLine();
+                        }
+
+                        if (answer.ToUpper() == "Y") // save changes
+                        {
+                            _person.SaveData();
+                        }
+                    }
                     loopAgain = false;
                     break;
                 default:
@@ -72,6 +152,10 @@ public class MenuManager
 
     public void OrdinanceMenu()
     {
+        // displays the ordinances in a menu by calling a function in the Person class.
+        // Handles the user's selection of which ones to add/edit. 
+        // Keep looping through this menu until the user chooses to exit
+
         bool loopAgain = true;
 
         while (loopAgain)
@@ -97,10 +181,10 @@ public class MenuManager
                     _person.EditOrdinance("Endowment");
                     break;
                 case "5": //SealingSpouse
-                    _person.EditOrdinance("SealingSpouse");
+                    _person.EditOrdinance("Sealing to Spouse");
                     break;
                 case "6": //SealingParents
-                    _person.EditOrdinance("SealingParents");
+                    _person.EditOrdinance("Sealing to Parents");
                     break;
                 case "7": //Exit
                     loopAgain = false;
@@ -114,6 +198,9 @@ public class MenuManager
 
     public void VitalsEventsMenu()
     {
+        // displays the vitals and events in a menu by calling a function in the Person class.
+        // Handles the user's selection of which ones to add/edit. 
+        // Keep looping through this menu until the user chooses to exit
         bool loopAgain = true;
 
         while (loopAgain)
@@ -129,22 +216,28 @@ public class MenuManager
                 case "1": // given name
                     Console.Write("Enter given name: ");
                     _person.SetGivenName(Console.ReadLine());
+                    _person.SetChanged(true);
                     break;
                 case "2": // last name
                     Console.Write("Enter last name: ");
                     _person.SetLastName(Console.ReadLine());
+                    _person.SetChanged(true);
                     break;
                 case "3": // sex
                     _person.SetSex(EnterSexInput());
+                    _person.SetChanged(true);
                     break;
                 case "4": // birth
                     _person.EnterBirthInput();
+                    _person.SetChanged(true);
                     break;
                 case "5": // marriage
                     _person.EnterMarriageInput();
+                    _person.SetChanged(true);
                     break;
                 case "6": // death
                     _person.EnterDeathInput();
+                    _person.SetChanged(true);
                     break;
                 case "7": // exit
                     loopAgain = false;

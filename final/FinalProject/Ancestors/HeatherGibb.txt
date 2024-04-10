@@ -1,0 +1,12 @@
+HeatherGibb|Heather|Bunnage|F
+Jul 6, 1978|Edmonton|
+May 21, 1998|Cardston|Curtis Gibb
+No Death Details|||
+True|Aug 2, 1986|Sherwood Park, AB|Baptism
+True|Aug 3, 1986|Sherwood Park, AB|Confirmation
+True|Apr 1998||Initiatory
+True|Apr 27, 1998|Cardston|Endowment
+True|May 21, 1998|Cardston|SealingSpouse|Curtis Gibb
+True|BIC||SealingParents|Judd Bunnage|Linda Blumell
+Birth Certificate|1978|Edmonton|HGibb
+Marriage Certificate|May 1998|Calgary, AB|CGibb

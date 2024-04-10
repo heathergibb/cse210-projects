@@ -48,6 +48,6 @@ public class Source
 
     public string FormatSaveString()
     {
-        return "Save details";
+        return $"{_description}|{_date}|{_location}|{_submittedBy}";
     }
 }

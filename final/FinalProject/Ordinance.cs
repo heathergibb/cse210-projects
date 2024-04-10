@@ -36,7 +36,7 @@ public class Ordinance
 
     public virtual string FormatSaveString()
     {
-        return "Save ordinance details";
+        return $"{_completed}|{_date}|{_location}|{_type}";
     }
 }
 
@@ -72,7 +72,7 @@ public class SealingSpouse : Ordinance
 
     public override string FormatSaveString()
     {
-        return "Save ordinance details";
+        return $"{_completed}|{_date}|{_location}|{_type}|{_spouse}";
     }
 }
 
@@ -110,6 +110,6 @@ public class SealingParents : Ordinance
     }
     public override string FormatSaveString()
     {
-        return "Save ordinance details";
+        return $"{_completed}|{_date}|{_location}|{_type}|{_father}|{_mother}";
     }
 }

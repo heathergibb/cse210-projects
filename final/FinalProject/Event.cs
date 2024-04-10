@@ -8,7 +8,7 @@ public abstract class Event
         _date = date;
         _location = location;
     }
-
+    
     public abstract string DisplayEventString();
     public abstract string FormatSaveString();
 }
@@ -40,7 +40,7 @@ public class BirthEvent : Event
 
     public override string FormatSaveString()
     {
-        throw new NotImplementedException();
+        return $"{_date}|{_location}|{_christeningDate}";
     }
 }
 public class MarriageEvent : Event
@@ -63,7 +63,7 @@ public class MarriageEvent : Event
 
     public override string FormatSaveString()
     {
-        throw new NotImplementedException();
+        return $"{_date}|{_location}|{_spouse}";
     }
 }
 
@@ -95,6 +95,6 @@ public class DeathEvent : Event
     }
     public override string FormatSaveString()
     {
-        throw new NotImplementedException();
+        return $"{_date}|{_location}|{_burialDate}|{_burialLocation}";
     }
 }

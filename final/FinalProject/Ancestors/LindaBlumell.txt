@@ -1,0 +1,11 @@
+LindaBlumell|Linda|Blumell|F
+May 8, 1946|Magrath, AB|
+May 20, 1967|Cardston, AB|Robert Judd Bunnage
+Mar 8, 2011|London, Ontario|Mar 21, 2011|Cherry Grove, AB
+True|1952|Magrath, AB|Baptism
+True|1952|Magrath, AB|Confirmation
+True|May 1967|Cardston|Initiatory
+True|May 1967|Cardston|Endowment
+True|May 20, 1967|Cardston|SealingSpouse|Robert Judd Bunnage
+True|BIC||SealingParents|Richard Emerson Blumell|Lois Dudley
+Death Certificate|2011|Ontario|RBunnage
